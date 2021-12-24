@@ -17,29 +17,33 @@ function getDate() {
   return `${date.getFullYear()} ${date.getDate().toLocaleString()}/${date.getMonth() + 1} ${hour}:${min}`;
 }
 
+function addMessage() {
+  const date = document.createElement('p');
+  date.classList.add('coord');
+  date.innerText = getDate();
+  coordinates = document.createElement('p');
+  const textElement = document.createElement('p');
+  textElement.innerText = `${text.value}`;
+  textElement.classList.add('message');
+  const div = document.createElement('div');
+  div.classList.add('message-all');
+  div.prepend(coordinates);
+  div.prepend(textElement);
+  div.prepend(date);
+  trello.prepend(div);
+  coordinates.classList.add('coord');
+  text.value = '';
+}
+
 text.addEventListener('keydown', (event) => {
   if (text.value === '') return;
   if (event.altKey && event.code === 'Enter') {
     coordinates = null;
     text.setAttribute('readonly', 'true');
-    const date = document.createElement('p');
-    date.classList.add('coord');
-    date.innerText = getDate();
-    coordinates = document.createElement('p');
-    const textElement = document.createElement('p');
-    textElement.innerText = `${text.value}`;
-    textElement.classList.add('message');
-    const div = document.createElement('div');
-    div.classList.add('message-all');
-    div.prepend(coordinates);
-    div.prepend(textElement);
-    div.prepend(date);
-    trello.prepend(div);
-    coordinates.classList.add('coord');
-    text.value = '';
     const successCallback = (position) => {
       const { latitude } = position.coords;
       const { longitude } = position.coords;
+      addMessage();
       coordinates.innerText = `[${latitude}, ${longitude}] 👁`;
       text.removeAttribute('readonly');
     };
@@ -63,6 +67,7 @@ ok.addEventListener('click', (e) => {
   e.preventDefault();
   const coord = validate(input.value);
   if (coord) {
+    addMessage();
     coordinates.innerText = `[${coord.latitude}, ${coord.longitude}] 👁`;
     input.value = '';
     input.classList.remove('not-valid');
